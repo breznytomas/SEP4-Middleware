@@ -21,14 +21,16 @@ public class WebsocketClient implements WebSocket.Listener {
     private Gson gson = new Gson();
     private DAIServerClient daiServerClient;
 
+
     // Send down-link message to device
     // Must be in Json format according to https://github.com/ihavn/IoT_Semester_project/blob/master/LORA_NETWORK_SERVER.md
+
     public void sendDownLink(String jsonTelegram) {
         server.sendText(jsonTelegram,true);
+        System.out.println("Info was send down to the board");
     }
 
-    // E.g. url: "wss://iotnet.teracom.dk/app?token=??????????????????????????????????????????????="
-    // Substitute ????????????????? with the token you have been given
+
     public WebsocketClient(String url) throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
         HttpClient client = HttpClient.newHttpClient();
         CompletableFuture<WebSocket> ws = client.newWebSocketBuilder()
@@ -76,35 +78,33 @@ public class WebsocketClient implements WebSocket.Listener {
     public CompletionStage<?> onText(WebSocket webSocket, CharSequence data, boolean last) {
 
         try {
-            daiServerClient.CreateReadingObject(data);
+
+            var reading=  daiServerClient.CreateReadingObject(data);
+
+            if (reading!=null) {
+                var numberForMotor = daiServerClient.PostReading(reading);
+                var jsonTelegram = BuildResponseJsonTelegram(numberForMotor, reading);
+                sendDownLink(jsonTelegram);
+            }
+
+
         } catch (NoSuchAlgorithmException | URISyntaxException | IOException | InterruptedException |
                  KeyManagementException e) {
             throw new RuntimeException(e);
         }
+
         System.out.println(data.toString());
         webSocket.request(1);
         return new CompletableFuture().completedFuture("onText() completed.").thenAccept(System.out::println);
     };
 
+    public String BuildResponseJsonTelegram(float numberForMotor, Reading reading){
 
+        DownlinkTelegram downlinkTelegram = new DownlinkTelegram("tx", reading.BoardId, 5,false, String.valueOf(numberForMotor));
+        return gson.toJson(downlinkTelegram);
 
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-         }
+ }
 
 

@@ -40,7 +40,7 @@ public class DAIServerClient {
 
 
 
-    public void CreateReadingObject(CharSequence data) throws NoSuchAlgorithmException, URISyntaxException, IOException, InterruptedException, KeyManagementException {
+    public Reading CreateReadingObject(CharSequence data) throws NoSuchAlgorithmException, URISyntaxException, IOException, InterruptedException, KeyManagementException {
 
         String indented = (new JSONObject(data.toString())).toString(4);
 
@@ -108,18 +108,18 @@ public class DAIServerClient {
 
                 Reading reading = new Reading(response.getEUI(), temperatures, humidities, lights, carbonDioxides);
 
-                PostReading(reading);
 
+                return reading;
             }
+        return null;
 
     }
 
 
-    public void PostReading(Reading reading) throws NoSuchAlgorithmException, KeyManagementException, URISyntaxException, IOException, InterruptedException {
+    public float PostReading(Reading reading) throws NoSuchAlgorithmException, KeyManagementException, URISyntaxException, IOException, InterruptedException {
         var uri = new URI("https://localhost:7218/api/Reading");
 
         System.out.println("Post reading activated");
-
 
 
         //COde for SSL to work
@@ -145,9 +145,12 @@ public class DAIServerClient {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
 
+
         System.out.println("Status code of response: "+response.statusCode());
         System.out.println("Response JSON");
         System.out.println(response.body());
+
+        return Float.parseFloat(response.body());
     }
 
 
