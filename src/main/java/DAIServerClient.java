@@ -42,6 +42,8 @@ public class DAIServerClient {
 
     public Reading CreateReadingObject(CharSequence data) throws NoSuchAlgorithmException, URISyntaxException, IOException, InterruptedException, KeyManagementException {
 
+        System.out.println(data);
+
         String indented = (new JSONObject(data.toString())).toString(4);
 
         ObjectFromLorawan response = gson.fromJson(indented, ObjectFromLorawan.class);
