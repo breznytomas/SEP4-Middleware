@@ -46,53 +46,45 @@ public class DAIServerClient {
 
         ObjectFromLorawan response = gson.fromJson(indented, ObjectFromLorawan.class);
 
-        /*System.out.println(response.getData());
-        System.out.println(response.getEUI());*/
+        System.out.println("the data in raw form");
+        System.out.println(response.getData());
 
             if (response.getCmd().equals("rx")) {
 
                 long epochTime = Instant.now().getEpochSecond();
 
-                String[] array = response.getData().split("(?<=\\G.{2})");
+                String[] array = response.getData().split("(?<=\\G.{4})");
 
                 Model.Temperature temperature;
                 Humidity humidity;
                 CarbonDioxide carbonDioxide;
                 Light light;
 
-                //34567654
 
-                //make sure that every value shares the same timestamp, crate timestamp variable and assign it to all the
-
-
-                System.out.println("Humidity " + (Integer.parseInt(array[0], 16)) / 10);
-                var hum1 = (Integer.parseInt(array[0], 16)) / 10;
-                var strings = Integer.toString(hum1);
-                var floats = Float.parseFloat(strings);
-                humidity = new Humidity(epochTime, floats);
-
-
-                //CO2
-                System.out.println("CO2 " + Integer.parseInt(array[1], 16));
-                var CO2 = Integer.parseInt(array[1], 16);
-                var CO2String = Integer.toString(CO2);
-                var CO2Float = Float.parseFloat(CO2String);
-                carbonDioxide = new CarbonDioxide(epochTime, CO2Float);
-
+                //Humidity
+                //System.out.println("Humidity " + (Integer.parseInt(array[0], 16)));
+                Integer hum1 = (Integer.parseInt(array[0], 16));
+                humidity = new Humidity(epochTime, hum1.floatValue());
+                System.out.println("Humidity: "+humidity.Value);
 
                 //Temperature
-                System.out.println("Temperature " + (Integer.parseInt(array[2], 16)) / 10);
-                var Temp = Integer.parseInt(array[2], 16) / 10;
-                var TempString = Integer.toString(Temp);
-                var TempFloat = Float.parseFloat(TempString);
-                temperature = new Temperature(epochTime, TempFloat);
+                //System.out.println("Temperature " + (Integer.parseInt(array[1], 16)));
+                Integer Temp = Integer.parseInt(array[1], 16);
+                float temp1 = Temp.floatValue()/10;
+                temperature = new Temperature(epochTime, temp1);
+                System.out.println("Temperature: "+temperature.Value);
+
+                //CO2
+                //System.out.println("CO2 " + Integer.parseInt(array[2], 16));
+                Integer CO2 = Integer.parseInt(array[2], 16);
+                carbonDioxide = new CarbonDioxide(epochTime, CO2.floatValue());
+                System.out.println("CarbonDioxide: "+ carbonDioxide.Value);
 
                 //Light
-                System.out.println("Light " + Integer.parseInt(array[3], 16));
-                var Light = Integer.parseInt(array[3], 16);
-                var LightString = Integer.toString(Light);
-                var LightFloat = Float.parseFloat(LightString);
-                light = new Light(epochTime, LightFloat);
+                //System.out.println("Light " + Integer.parseInt(array[3], 16));
+                Integer Light = Integer.parseInt(array[3], 16);
+                light = new Light(epochTime, Light.floatValue());
+                System.out.println("Light: " + light.Value);
 
 
                 List<Temperature> temperatures = new ArrayList<>();
@@ -105,9 +97,7 @@ public class DAIServerClient {
                 lights.add(light);
 
 
-
                 Reading reading = new Reading(response.getEUI(), temperatures, humidities, lights, carbonDioxides);
-
 
                 return reading;
             }
@@ -116,11 +106,8 @@ public class DAIServerClient {
     }
 
 
-    public float PostReading(Reading reading) throws NoSuchAlgorithmException, KeyManagementException, URISyntaxException, IOException, InterruptedException {
+    public int PostReading(Reading reading) throws NoSuchAlgorithmException, KeyManagementException, URISyntaxException, IOException, InterruptedException {
         var uri = new URI("https://localhost:7218/api/Reading");
-
-        System.out.println("Post reading activated");
-
 
         //COde for SSL to work
         SSLContext sslContext = SSLContext.getInstance("TLS");
@@ -129,13 +116,8 @@ public class DAIServerClient {
         HttpClient client = HttpClient.newBuilder()
                 .sslContext(sslContext)
                 .build();
-        // code for SSL end
 
         String JsonString = gson.toJson(reading);
-        System.out.println("JSON from reading object");
-        System.out.println(JsonString);
-
-
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(uri)
                 .header("Content-Type", "application/json; charset=utf-8;")
@@ -143,14 +125,7 @@ public class DAIServerClient {
                 .build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-
-
-        System.out.println("Status code of response: "+response.statusCode());
-        System.out.println("Response JSON");
-        System.out.println(response.body());
-
-        return Float.parseFloat(response.body());
+        return Integer.parseInt(response.body());
     }
 
 

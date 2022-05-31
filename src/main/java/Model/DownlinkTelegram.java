@@ -3,7 +3,7 @@ package Model;
 public class DownlinkTelegram {
 
 
-    public DownlinkTelegram(String cmd, String EUI, float port, boolean confirmed, String data) {
+    public DownlinkTelegram(String cmd, String EUI, int port, boolean confirmed, String data) {
         this.cmd = cmd;
         this.EUI = EUI;
         this.port = port;
@@ -15,7 +15,7 @@ public class DownlinkTelegram {
 
     private String EUI;
 
-    private float port;
+    private int port;
 
     private boolean confirmed;
 

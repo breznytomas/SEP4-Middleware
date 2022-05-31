@@ -24,7 +24,22 @@ public class Main {
      websocketClient = new WebsocketClient(uri);
 
 
-            GenerateData();
+       /* int sample= 200;
+
+        String sometext;
+
+        sometext = Integer.toHexString(sample);
+        System.out.println(sometext);
+        sometext = "00"+sometext;
+
+        System.out.println(sometext);*/
+
+
+
+
+
+
+            //GenerateData();
 
 
          while(true){

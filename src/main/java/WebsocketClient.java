@@ -2,6 +2,7 @@
 
 import Model.*;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
 import java.net.URI;
@@ -18,7 +19,7 @@ import java.util.concurrent.CompletionStage;
 
 public class WebsocketClient implements WebSocket.Listener {
     private WebSocket server = null;
-    private Gson gson = new Gson();
+    private Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private DAIServerClient daiServerClient;
 
 
@@ -27,7 +28,6 @@ public class WebsocketClient implements WebSocket.Listener {
 
     public void sendDownLink(String jsonTelegram) {
         server.sendText(jsonTelegram,true);
-        System.out.println("Info was send down to the board");
     }
 
 
@@ -78,12 +78,12 @@ public class WebsocketClient implements WebSocket.Listener {
     public CompletionStage<?> onText(WebSocket webSocket, CharSequence data, boolean last) {
 
         try {
-
             var reading=  daiServerClient.CreateReadingObject(data);
 
             if (reading!=null) {
                 var numberForMotor = daiServerClient.PostReading(reading);
                 var jsonTelegram = BuildResponseJsonTelegram(numberForMotor, reading);
+
                 sendDownLink(jsonTelegram);
             }
 
@@ -98,9 +98,15 @@ public class WebsocketClient implements WebSocket.Listener {
         return new CompletableFuture().completedFuture("onText() completed.").thenAccept(System.out::println);
     };
 
-    public String BuildResponseJsonTelegram(float numberForMotor, Reading reading){
+    public String BuildResponseJsonTelegram(int numberForMotor, Reading reading){
 
-        DownlinkTelegram downlinkTelegram = new DownlinkTelegram("tx", reading.BoardId, 5,false, String.valueOf(numberForMotor));
+        String uplinkData ="00" + Integer.toHexString(numberForMotor);
+        System.out.println(uplinkData);
+
+        DownlinkTelegram downlinkTelegram = new DownlinkTelegram("tx", reading.BoardId, 2,true, uplinkData);
+        System.out.println("G O O D D A T A");
+        System.out.println(gson.toJson(downlinkTelegram));
+        System.out.println("G O O D D A T A");
         return gson.toJson(downlinkTelegram);
 
     }
