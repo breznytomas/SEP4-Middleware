@@ -23,7 +23,6 @@ public class Main {
 
      websocketClient = new WebsocketClient(uri);
 
-
        /* int sample= 200;
 
         String sometext;
@@ -33,10 +32,6 @@ public class Main {
         sometext = "00"+sometext;
 
         System.out.println(sometext);*/
-
-
-
-
 
 
             //GenerateData();

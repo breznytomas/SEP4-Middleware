@@ -129,29 +129,4 @@ public class DAIServerClient {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         return Integer.parseInt(response.body());
     }
-
-
-
-
-
-    public void TestAPIGET() throws IOException, InterruptedException {
-        System.out.println("Test API");
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://smart-greenhouse-data-server.herokuapp.com/api/Light?boardId=7"))
-                .header("X-App", "Demo")
-                .GET()
-                .build();
-
-        var client = HttpClient.newHttpClient();
-
-        HttpResponse.BodyHandler<String> asString = HttpResponse.BodyHandlers.ofString();
-
-        HttpResponse<String> response = client.send(request, asString);
-
-        int statusCode = response.statusCode();
-        System.out.printf("Status Code: %s%n", statusCode);
-        HttpHeaders headers = response.headers();
-        System.out.printf("Response Headers: %s%n", headers);
-        System.out.println(response.body());
-    }
 }

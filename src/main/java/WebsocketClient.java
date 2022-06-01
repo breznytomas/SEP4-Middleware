@@ -99,14 +99,18 @@ public class WebsocketClient implements WebSocket.Listener {
     };
 
     public String BuildResponseJsonTelegram(int numberForMotor, Reading reading){
+            String uplinkData;
 
-        String uplinkData ="00" + Integer.toHexString(numberForMotor);
+        if (numberForMotor<10){
+            uplinkData ="000" + Integer.toHexString(numberForMotor);
+       }
+       else{
+            uplinkData = "00" + Integer.toHexString(numberForMotor);
+       }
+
         System.out.println(uplinkData);
-
         DownlinkTelegram downlinkTelegram = new DownlinkTelegram("tx", reading.BoardId, 2,true, uplinkData);
-        System.out.println("G O O D D A T A");
         System.out.println(gson.toJson(downlinkTelegram));
-        System.out.println("G O O D D A T A");
         return gson.toJson(downlinkTelegram);
 
     }
