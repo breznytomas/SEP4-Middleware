@@ -109,7 +109,7 @@ public class DAIServerClient {
 
 
     public int PostReading(Reading reading) throws NoSuchAlgorithmException, KeyManagementException, URISyntaxException, IOException, InterruptedException {
-        var uri = new URI("https://localhost:7218/api/Reading");
+        var uri = new URI("https://smart-greenhouse-data-server.herokuapp.com/api/Reading");
 
         //COde for SSL to work
         SSLContext sslContext = SSLContext.getInstance("TLS");

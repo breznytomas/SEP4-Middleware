@@ -34,7 +34,7 @@ public class Main {
         System.out.println(sometext);*/
 
 
-            //GenerateData();
+            /*GenerateData();*/
 
 
          while(true){
@@ -50,7 +50,7 @@ public class Main {
       long epochTime = Instant.now().getEpochSecond();
 
 
-      Temperature temperature = new Temperature(epochTime, (float) Math.floor(Math.random() * 100));
+      Temperature temperature = new Temperature(epochTime, (float) 421);
        /* Temperature temperature1 = new Temperature(epochTime,(float)Math.floor(Math.random()*100));
         Temperature temperature2 = new Temperature(epochTime,(float)Math.floor(Math.random()*100));*/
 
@@ -91,7 +91,7 @@ public class Main {
          lights.add(light4);*/
 
 
-         Reading reading = new Reading("0004A30B00259D2C", temperatures, humidities, lights, carbonDioxides);
+         Reading reading = new Reading("0004A30B00251192", temperatures, humidities, lights, carbonDioxides);
 
         var response = daiServerClient.PostReading(reading);
         System.out.println("This is the response: "+response);
